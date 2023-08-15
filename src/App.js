@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
 
-function App() {
+const App = () => {
+  const [images, setImages] = useState(null);
+  const [value, setValue] = useState(null);
+  const surpriseOptions = [
+    "yellow red star",
+    "life in colors",
+    "nether animal rabbit blue",
+  ];
+  const getImages = async () => {
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          message: "BLUGH",
+        }),
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const response = await fetch("http://localhost:8000/images", options);
+      const data = await response.json();
+      console.log(data);
+      setImages(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  console.log(value);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="app">
+      <section className="search-section">
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Start with detailed description
+          <span className="surprise">Surprise!</span>
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <div className="input-container">
+          <input placeholder="Some text" onChange={(e) => setValue(e.target.value)}/>
+          <button onClick={getImages}>Generate</button>
+        </div>
+      </section>
+      <section className="image-section">
+        {images?.map((image, _index) => (
+          <img key={_index} src={image.url} alt={`Generated image of${value}`}/>
+        ))} 
+      </section>
     </div>
   );
-}
+};
 
 export default App;
